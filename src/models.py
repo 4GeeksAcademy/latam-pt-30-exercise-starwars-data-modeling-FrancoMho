@@ -7,23 +7,65 @@ from eralchemy2 import render_er
 
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
+class User(Base):
+    __tablename__ = 'user'
+    # PK
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
+    email = Column(String(250), unique=True)
+    #CHILDREN
+    favorites= relationship('favorites', back_populates='user')
 
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
+class Character(Base):
+    __tablename__ = 'character'
+    # PK
     id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+    name = Column(String(250))
+    age = Column(Integer)
+    heigth = Column(Integer)
+    eye_color = Column(Integer)
+    #CHILDREN
+    favorite= relationship('favorites', back_populates='characters')
+
+class Planet(Base):
+    __tablename__ = 'planet'
+   # PK
+    id = Column(Integer, primary_key=True)
+    diameter = Column(Integer)
+    gravity = Column(Integer)
+    population = Column(Integer)
+    climate = Column(String(250))
+    #CHILDREN
+    favorites= relationship('favorite', back_populates='planets')
+
+class Starship(Base):
+    __tablename__ = 'starship'
+   # PK
+    id = Column(Integer, primary_key=True)
+    model = Column(String(250))
+    starship_class = Column(String(250))
+    crew = Column(Integer)
+    passengers = Column(Integer)
+    #CHILDREN
+    favorites= relationship('favorite', back_populates='starships')
+
+class Favorite(Base):
+    __tablename__ = 'favorites'
+    # PK
+    id = Column(Integer, primary_key=True)
+
+    # FK USER.
+    user = relationship('user', back_populates='favorites')
+    user_id = Column(Integer, ForeignKey('user.id'))
+    # FK CHARACTERS.
+    character = relationship('characters', back_populates='favorites')
+    character_id = Column(Integer, ForeignKey('character.id'))
+    # FK PLANETS.
+    planet = relationship('planet', back_populates='favorites')
+    planet_id = Column(Integer, ForeignKey('planet.id'))
+    # FK STARSHIPS.
+    starship = relationship('starship', back_populates='favorites')
+    starship_id = Column(Integer, ForeignKey('starship.id'))
 
     def to_dict(self):
         return {}
